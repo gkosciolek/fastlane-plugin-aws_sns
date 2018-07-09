@@ -12,13 +12,12 @@ fastlane add_plugin aws_sns
 
 ## About aws_sns
 
-[AWS SNS](https://aws.amazon.com/sns/) is fully manage push notification service. This plugin creates an AWS SNS platform application for iOS and Android apps.
+[AWS SNS](https://aws.amazon.com/sns/) is fully managed push notification service. This plugin updates an AWS SNS platform application for iOS and Android apps.
 
-iOS app are created by uploading a private key (p12) to AWS SNS - which can easily be created with [PEM](https://github.com/fastlane/fastlane/tree/master/pem)
+iOS app are updated by uploading a private key (p12) to AWS SNS - which can easily be created with [PEM](https://github.com/fastlane/fastlane/tree/master/pem)
 
-Android apps are created by sending up a GCM Api Key to AWS SNS - obtained through your [Google Cloud Platform dashboard](https://console.cloud.google.com)
+Android apps are updated by sending up a GCM Api Key to AWS SNS - obtained through your [Google Cloud Platform dashboard](https://console.cloud.google.com)
 
-The call to `aws_sns` will return the AWS SNS plattform application's [ARN](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) (if you need it). The platform application's ARN is what is used to actually send notifications to your app(s) later on.
 
 ## Example
 
@@ -26,7 +25,7 @@ The call to `aws_sns` will return the AWS SNS plattform application's [ARN](http
 ```ruby
 aws_sns(
   platform: 'APNS',
-  platform_name: 'your_awesome_ios_app',
+  platform_application_arn: 'your_application_platform_arn',
   platform_apns_private_key_path: 'path/to/cert.p12',
 
   # Optional private key password
@@ -38,21 +37,9 @@ aws_sns(
 ```ruby
 aws_sns(
   platform: 'GCM',
-  platform_name: 'your_awesome_android_app',
+  platform_application_arn: 'your_application_platform_arn',
   platform_gcm_api_key: 'your_gcm_api_key'
 )
-```
-
-### iOS (using the ARN)
-```ruby
-ios_arn = aws_sns(
-  platform: 'APNS',
-  platform_name: 'your_awesome_ios_app',
-  platform_apns_private_key_path: 'path/to/cert.p12',
-)
-
-# TODO: Possibly send this ARN to someone important who needs to configure stuff
-puts "ARN: #{ios_arn}"
 ```
 
 ## Run tests for this plugin

@@ -2,9 +2,6 @@ require 'aws-sdk'
 
 module Fastlane
   module Actions
-    module SharedValues
-      AWS_SNS_PLATFORM_APPLICATION_ARN = :AWS_SNS_PLATFORM_APPLICATION_ARN
-    end
 
     class AwsSnsAction < Action
       def self.run(params)
@@ -14,7 +11,7 @@ module Fastlane
         region = params[:region]
 
         platform = params[:platform]
-        platform_name = params[:platform_name]
+        platform_application_arn = params[:platform_application_arn]
 
         platform_apns_private_key_path = params[:platform_apns_private_key_path]
         platform_apns_private_key_password = params[:platform_apns_private_key_password]
@@ -25,7 +22,7 @@ module Fastlane
         UI.user_error!("No S3 secret access key given, pass using `secret_access_key: 'secret key'`") unless secret_access_key.to_s.length > 0
         UI.user_error!("No S3 region given, pass using `region: 'region'`") unless region.to_s.length > 0
         UI.user_error!("No S3 region given, pass using `platform: 'platform'`") unless platform.to_s.length > 0
-        UI.user_error!("No S3 region given, pass using `platform_name: 'platform_name'`") unless platform_name.to_s.length > 0
+        UI.user_error!("No S3 region given, pass using `platform_application_arn: 'platform_application_arn'`") unless platform_application_arn.to_s.length > 0
 
         #
         # Initialize AWS client
@@ -59,38 +56,29 @@ module Fastlane
         #
         #
         #
-        UI.crash!("Unable to create any attributes to create platform application") unless attributes
+        UI.crash!("Unable to create any attributes to update platform application") unless attributes
         begin
-          resp = client.create_platform_application({
-            name: platform_name,
-            platform: platform,
+          client.set_platform_application_attributes({
+            platform_application_arn: platform_application_arn,
             attributes: attributes,
           })
-          arn = resp.platform_application_arn
 
-          Actions.lane_context[SharedValues::AWS_SNS_PLATFORM_APPLICATION_ARN] = arn
-          ENV[SharedValues::AWS_SNS_PLATFORM_APPLICATION_ARN.to_s] = arn
         rescue => error
-          UI.crash!("Create Platform Error: #{error.inspect}")
+          UI.crash!("Update Platform Error: #{error.inspect}")
         end
 
-        Actions.lane_context[SharedValues::AWS_SNS_PLATFORM_APPLICATION_ARN]
       end
 
       def self.description
-        "Creates AWS SNS platform applications"
+        "Updates AWS SNS platform applications"
       end
 
       def self.authors
         ["Josh Holtz"]
       end
 
-      def self.return_value
-        "Platform Application ARN"
-      end
-
       def self.details
-        "Creates AWS SNS platform applications for iOS and Android"
+        "Updates AWS SNS platform applications for iOS and Android"
       end
 
       def self.available_options
@@ -117,9 +105,9 @@ module Fastlane
                                        verify_block: proc do |value|
                                          UI.user_error!("Invalid platform #{value}") unless ['APNS', 'APNS_SANDBOX', 'GCM'].include?(value)
                                        end),
-          FastlaneCore::ConfigItem.new(key: :platform_name,
-                                      env_name: "AWS_SNS_PLATFORM_NAME",
-                                      description: "AWS Platform Name",
+          FastlaneCore::ConfigItem.new(key: :platform_application_arn,
+                                      env_name: "AWS_SNS_PLATFORM_APPLICATION_ARN",
+                                      description: "AWS Platform Application ARN",
                                       optional: false),
           FastlaneCore::ConfigItem.new(key: :platform_apns_private_key_path,
                                       env_name: "AWS_SNS_PLATFORM_APNS_PRIVATE_KEY_PATH",

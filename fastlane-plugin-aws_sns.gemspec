@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.author        = %q{Josh Holtz}
   spec.email         = %q{josh@rokkincat.com}
 
-  spec.summary       = %q{Creates AWS SNS platform applications}
-  spec.homepage      = "https://github.com/joshdholtz/fastlane-plugin-aws_sns"
+  spec.summary       = %q{Updates AWS SNS platform applications}
+  spec.homepage      = "https://github.com/gkosciolek/fastlane-plugin-aws_sns"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
